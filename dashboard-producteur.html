@@ -97,8 +97,9 @@
                     <input type="date" id="prod-dlc" />
                 </div>
                 <div class="form-field">
-                    <label for="prod-image">Image (URL ou nom de fichier)</label>
-                    <input type="text" id="prod-image" placeholder="Ex : panier-anti-gaspi-famille.png" />
+                    <label for="prod-image">Image du produit (PNG/JPG/WebP – max 300 Ko)</label>
+                    <input type="file" id="prod-image" accept="image/png,image/jpeg,image/webp" />
+                    <p class="form-note">Conseil : privilégiez une image légère (ex : JPG), car vous ne pouvez pas deppasser 300Ko.</p>
                 </div>
             </div>
 
@@ -818,54 +819,86 @@ nextMonthContainer.innerHTML = forecastHtml;
     const form = document.getElementById("product-form");
     const messageEl = document.getElementById("product-message");
 
-    if (form) {
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            messageEl.textContent = "";
-            messageEl.className = "form-note auth-message";
+   if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    messageEl.textContent = "";
+    messageEl.className = "form-note auth-message";
 
-            const name = document.getElementById("prod-name").value.trim();
-            const description = document.getElementById("prod-description").value.trim();
-            const price = parseFloat(document.getElementById("prod-price").value);
-            const category = document.getElementById("prod-category").value;
-            const origin = document.getElementById("prod-origin").value.trim();
-            const region = document.getElementById("prod-region").value.trim();
-            const dlc = document.getElementById("prod-dlc").value;
-            const image = document.getElementById("prod-image").value.trim();
+    const name = document.getElementById("prod-name").value.trim();
+    const description = document.getElementById("prod-description").value.trim();
+    const price = parseFloat(document.getElementById("prod-price").value);
+    const category = document.getElementById("prod-category").value;
+    const origin = document.getElementById("prod-origin").value.trim();
+    const region = document.getElementById("prod-region").value.trim();
+    const dlc = document.getElementById("prod-dlc").value;
 
-            if (!name || !description || isNaN(price) || price <= 0 || !origin) {
-                messageEl.textContent = "Merci de remplir tous les champs obligatoires correctement.";
-                messageEl.classList.add("auth-error");
-                return;
-            }
+    //  Image depuis l’ordinateur
+    const fileInput = document.getElementById("prod-image");
+    const file = fileInput?.files?.[0] || null;
 
-            const all = loadProducts();
-
-            const newProduct = {
-                id: "prod-" + Date.now().toString(),
-                name,
-                description,
-                price,
-                category,
-                origin,
-                region,
-                dlc,
-                image,
-                producerId: user.id,
-                producerName: user.name,
-                createdAt: new Date().toISOString()
-            };
-
-            all.push(newProduct);
-            saveProducts(all);
-
-            messageEl.textContent = "Produit publié. Il sera visible dans le catalogue.";
-            messageEl.classList.add("auth-success");
-            form.reset();
-            renderMyProducts();
-            renderProducerOrders();
-        });
+    if (!name || !description || isNaN(price) || price <= 0 || !origin) {
+      messageEl.textContent = "Merci de remplir tous les champs obligatoires correctement.";
+      messageEl.classList.add("auth-error");
+      return;
     }
+
+    // Convertit le fichier en base64 (data URL)
+    let imageDataUrl = "";
+    if (file) {
+      const MAX_BYTES = 300 * 1024; // 300 Ko
+      if (file.size > MAX_BYTES) {
+        messageEl.textContent = "Image trop lourde : elle doit faire au maximum 300 Ko.";
+        messageEl.classList.add("auth-error");
+        return;
+      }
+
+      //  sécurité simple (type MIME)
+      const allowed = ["image/png", "image/jpeg", "image/webp"];
+      if (!allowed.includes(file.type)) {
+        messageEl.textContent = "Format image non supporté. Utilisez PNG, JPG/JPEG ou WebP.";
+        messageEl.classList.add("auth-error");
+        return;
+      }
+
+      imageDataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Erreur de lecture du fichier image"));
+        reader.readAsDataURL(file);
+      });
+    } else {
+      // fallback si pas d’image fournie
+      imageDataUrl = "panier-anti-gaspi-famille.png";
+    }
+
+    const all = loadProducts();
+
+    const newProduct = {
+      id: "prod-" + Date.now().toString(),
+      name,
+      description,
+      price,
+      category,
+      origin,
+      region,
+      dlc,
+      image: imageDataUrl,   // base64 OU fallback
+      producerId: user.id,
+      producerName: user.name,
+      createdAt: new Date().toISOString()
+    };
+
+    all.push(newProduct);
+    saveProducts(all);
+
+    messageEl.textContent = "Produit publié. Il sera visible dans le catalogue.";
+    messageEl.classList.add("auth-success");
+    form.reset();
+    renderMyProducts();
+    renderProducerOrders();
+  });
+}
 
     renderMyProducts();
     renderProducerOrders();
