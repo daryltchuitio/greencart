@@ -112,14 +112,27 @@ body {
 }
 
 .btn-outline {
-    border-color: #2e7d32;
-    color: #2e7d32;
-    background-color: transparent;
+  background-color: transparent;
+  color: #0f766e;
+  border-radius: 999px;
+  border: 1px solid transparent;  /* plus de cercle vert par défaut */
+  padding: 0.35rem 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
 }
 .btn-outline:hover,
 .btn-outline:focus {
     background-color: #e8f5e9;
 }
+
+/* Onglet actif dans la navigation */
+.nav-list a.nav-active,
+.nav-list button.nav-active {
+  border-radius: 999px;
+  border: 2px solid #0f766e;    
+  padding: 0.35rem 0.9rem;
+}
+
 
 /* HERO */
 .hero {
