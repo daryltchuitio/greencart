@@ -38,12 +38,6 @@
   </url>
 
   <url>
-    <loc>https://ias-b3-2-tsds.netlify.app/mentions-legales.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <url>
     <loc>https://ias-b3-2-tsds.netlify.app/accessibilite.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
