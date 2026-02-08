@@ -1268,3 +1268,84 @@ font-weight: 600;
 #segments-block {
   margin-top: 0.5rem;
 }
+
+/* Fil d’Ariane */
+
+.breadcrumb {
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+.breadcrumb a {
+  color: #2f7d32; 
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb span {
+  color: #555;
+}
+
+/* Page 404 */
+
+.error-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  background-color: #f4f7f5;
+}
+
+.error-page h1 {
+  font-size: 5rem;
+  color: #2f7d32;
+  margin-bottom: 0.5rem;
+}
+
+.error-page h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.error-page p {
+  max-width: 500px;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* Boutons page 404 */
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #2f7d32;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.btn:hover {
+  background-color: #256628;
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f0f0;
+}
