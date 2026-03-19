@@ -1,4 +1,3 @@
-// cart.js — gestion compteur panier GreenCart (front-only)
 const CART_KEY = "greencart_cart";
 
 function getCart() {
@@ -13,11 +12,9 @@ function getCartCount() {
 function updateCartCount() {
   const count = getCartCount();
 
-  // Met à jour tous les éléments qui ont la classe "cart-count"
   document.querySelectorAll(".cart-count").forEach(el => {
     el.textContent = count;
 
-    // Si panier vide = on masque le badge
     if (count <= 0) {
       el.style.display = "none";
     } else {
@@ -26,8 +23,53 @@ function updateCartCount() {
   });
 }
 
-// Mise à jour au chargement de chaque page
+/**
+ * Déclenche un événement personnalisé quand le panier change
+ */
+function notifyCartChanged() {
+  window.dispatchEvent(new Event("cartUpdated"));
+}
+
+/**
+ * Intercepte les modifications de localStorage pour détecter
+ * les changements du panier dans le même onglet
+ */
+(function () {
+  const originalSetItem = localStorage.setItem;
+  const originalRemoveItem = localStorage.removeItem;
+  const originalClear = localStorage.clear;
+
+  localStorage.setItem = function (key, value) {
+    originalSetItem.apply(this, arguments);
+
+    if (key === CART_KEY) {
+      notifyCartChanged();
+    }
+  };
+
+  localStorage.removeItem = function (key) {
+    originalRemoveItem.apply(this, arguments);
+
+    if (key === CART_KEY) {
+      notifyCartChanged();
+    }
+  };
+
+  localStorage.clear = function () {
+    originalClear.apply(this, arguments);
+    notifyCartChanged();
+  };
+})();
+
+// Mise à jour au chargement
 document.addEventListener("DOMContentLoaded", updateCartCount);
 
-// Si une autre page modifie le panier et qu’on revient → mise à jour
-window.addEventListener("storage", updateCartCount);
+// Mise à jour si un autre onglet modifie le panier
+window.addEventListener("storage", (event) => {
+  if (!event.key || event.key === CART_KEY) {
+    updateCartCount();
+  }
+});
+
+// Mise à jour immédiate dans le même onglet
+window.addEventListener("cartUpdated", updateCartCount);
