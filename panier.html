@@ -253,7 +253,7 @@
                 return;
             }
             
-            // Création de la commande
+            
             const ORDERS_KEY = "greencart_orders";
             const orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
             const subtotal = cart.reduce((s, p) => s + p.price * p.qty, 0);
@@ -267,14 +267,13 @@
             subtotal,
             fees,
             total,
-            status: "en_preparation"  // statut initial
+            status: "en_preparation"  
         };
 
 
             orders.push(newOrder);
             localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
 
-            // Vider le panier après commande
             saveCart([]);
             updateCartCount();
             alert("Votre commande a été enregistrée. Vous allez être redirigé vers votre espace consommateur.");

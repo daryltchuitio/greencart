@@ -23,17 +23,10 @@ function updateCartCount() {
   });
 }
 
-/**
- * Déclenche un événement personnalisé quand le panier change
- */
 function notifyCartChanged() {
   window.dispatchEvent(new Event("cartUpdated"));
 }
 
-/**
- * Intercepte les modifications de localStorage pour détecter
- * les changements du panier dans le même onglet
- */
 (function () {
   const originalSetItem = localStorage.setItem;
   const originalRemoveItem = localStorage.removeItem;
@@ -61,15 +54,14 @@ function notifyCartChanged() {
   };
 })();
 
-// Mise à jour au chargement
+
 document.addEventListener("DOMContentLoaded", updateCartCount);
 
-// Mise à jour si un autre onglet modifie le panier
+
 window.addEventListener("storage", (event) => {
   if (!event.key || event.key === CART_KEY) {
     updateCartCount();
   }
 });
 
-// Mise à jour immédiate dans le même onglet
 window.addEventListener("cartUpdated", updateCartCount);

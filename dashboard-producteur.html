@@ -234,24 +234,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Prévisions : saisonnalité ---
 function getSeasonFactor(month, category) {
-// month = 1..12
-// catégorie = anti-gaspi, etudiant, famille, terroir
+
 if (month >= 6 && month <= 8) { // été
 if (category === "famille" || category === "terroir") return 1.2;
 return 1.1;
 }
-if (month === 12 || month === 1) { // fêtes + plein hiver
+if (month === 12 || month === 1) { 
 if (category === "terroir") return 1.3;
 return 1.1;
 }
-if (month >= 3 && month <= 5) { // printemps
+if (month >= 3 && month <= 5) { 
 if (category === "anti-gaspi") return 1.2;
 return 1.1;
 }
-if (month >= 9 && month <= 11) { // automne
-return 1.05;
+if (month >= 9 && month <= 11) { 
 }
-// par défaut
+
 return 1.0;
 }
 
@@ -276,8 +274,7 @@ return 1.0;
             return;
         }
 
-        // Stats par utilisateur (uniquement ceux qui ont acheté AU MOINS un produit du producteur)
-        const statsByUser = {}; // userId -> { totalOrders, totalSpent, firstDate, lastDate, categoriesCount }
+        const statsByUser = {}; 
         allOrders.forEach(order => {
             const items = order.items || [];
             const itemsForProducer = items.filter(it => myProductIds.includes(it.id));
@@ -293,7 +290,6 @@ return 1.0;
                 const lineTotal = (it.price * it.qty);
                 totalForProducer += lineTotal;
 
-                // retrouver la catégorie du produit
                 const prod = myProducts.find(p => p.id === it.id);
                 const cat = prod ? (prod.category || "autre") : "autre";
                 if (!localCategories[cat]) localCategories[cat] = 0;
@@ -330,7 +326,6 @@ return 1.0;
             return;
         }
 
-        // Fonction utilitaire pour trouver l'utilisateur et sa catégorie dominante
         function getUserInfo(userId, stats) {
             const user = allUsers.find(u => u.id === userId);
             const name = user ? (user.name || user.email || "Client GreenCart") : "Client GreenCart";
@@ -348,13 +343,13 @@ return 1.0;
             return { name, favCat };
         }
 
-        // Règles de segmentation simplifiées
+        
         function getSegmentLabel(stats, favCat) {
             const avgBasket = stats.totalSpent / stats.totalOrders;
 
             let daysSpan = (stats.lastDate - stats.firstDate) / (1000 * 60 * 60 * 24);
             if (daysSpan < 1) daysSpan = 1;
-            const frequency = stats.totalOrders / daysSpan; // commandes par jour 
+            const frequency = stats.totalOrders / daysSpan; 
 
             if (favCat === "etudiant" && avgBasket < 15 && stats.totalOrders >= 2) {
                 return "Étudiant budget serré";
@@ -391,8 +386,8 @@ return 1.0;
             }
         }
 
-        // Construire une vue par segment
-        const segmentsMap = {}; // label -> { usersCount, avgBasketTotal, avgBasketCount, favCatCount }
+        
+        const segmentsMap = {}; 
         userIds.forEach(uid => {
             const stats = statsByUser[uid];
             const { name, favCat } = getUserInfo(uid, stats);
@@ -501,8 +496,8 @@ nextMonthContainer.innerHTML = '<p class="form-note">Les prévisions apparaîtro
 return;
 }
 
-// Agrégation par produit et par mois (YYYY-MM)
-const statsByProductMonth = {}; // { productId: { "2025-11": qty, ... } }
+
+const statsByProductMonth = {}; 
 const monthsSet = new Set();
 
 allOrders.forEach(order => {
@@ -526,14 +521,14 @@ statsByProductMonth[item.id][monthKey] += (item.qty || 1);
 });
 });
 
-const allMonths = Array.from(monthsSet).sort((a, b) => b.localeCompare(a)); // décroissant
+const allMonths = Array.from(monthsSet).sort((a, b) => b.localeCompare(a)); 
 if (allMonths.length === 0) {
 historyContainer.innerHTML = '<p class="form-note">Aucune commande contenant vos produits pour l’instant.</p>';
 nextMonthContainer.innerHTML = '<p class="form-note">Les prévisions seront visibles dès qu’un client aura commandé vos produits.</p>';
 return;
 }
 
-const lastMonths = allMonths.slice(0, 3); // jusqu’à 3 derniers mois
+const lastMonths = allMonths.slice(0, 3); 
 const currentDate = new Date();
 const currentMonth = currentDate.getMonth() + 1;
 const currentYear = currentDate.getFullYear();
@@ -544,7 +539,7 @@ nextMonth = 1;
 nextYear += 1;
 }
 
-// Construire l’historique : total sur les 3 derniers mois + moyenne
+
 const historyRows = [];
 const forecastRows = [];
 
@@ -558,7 +553,7 @@ totalOnPeriod += perMonth[mKey] || 0;
 });
 
 if (totalOnPeriod === 0) {
-// aucun historique récent pour ce produit
+
 return;
 }
 
@@ -584,7 +579,7 @@ forecast
 });
 });
 
-// Rendu de l’historique
+
 if (historyRows.length === 0) {
 historyContainer.innerHTML = '<p class="form-note">Pas encore assez de recul sur vos produits pour établir un historique (ou bien aucune commande récente).</p>';
 } else {
@@ -601,7 +596,7 @@ let historyHtml = `
 </thead>
 <tbody>
 `;
-const periodLabel = lastMonths.reverse().join(" à "); // plus ancien -> plus récent
+const periodLabel = lastMonths.reverse().join(" à "); 
 historyRows.forEach(row => {
 historyHtml += `
 <tr>
@@ -695,7 +690,7 @@ nextMonthContainer.innerHTML = forecastHtml;
             container.appendChild(article);
         });
 
-        // Boutons supprimer avec confirmation
+    
         container.querySelectorAll(".remove-product-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 const confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette publication ?");
@@ -706,7 +701,7 @@ nextMonthContainer.innerHTML = forecastHtml;
                 const filtered = all.filter(prod => !(prod.id === id && prod.producerId === user.id));
                 saveProducts(filtered);
                 renderMyProducts();
-                renderProducerOrders(); // met aussi à jour les commandes liées
+                renderProducerOrders(); 
             });
         });
     }
@@ -847,7 +842,7 @@ nextMonthContainer.innerHTML = forecastHtml;
     const region = document.getElementById("prod-region").value.trim();
     const dlc = document.getElementById("prod-dlc").value;
 
-    //  Image depuis l’ordinateur
+    
     const fileInput = document.getElementById("prod-image");
     const file = fileInput?.files?.[0] || null;
 
@@ -857,17 +852,16 @@ nextMonthContainer.innerHTML = forecastHtml;
       return;
     }
 
-    // Convertit le fichier en base64 (data URL)
+    
     let imageDataUrl = "";
     if (file) {
-      const MAX_BYTES = 300 * 1024; // 300 Ko
+      const MAX_BYTES = 300 * 1024; 
       if (file.size > MAX_BYTES) {
         messageEl.textContent = "Image trop lourde : elle doit faire au maximum 300 Ko.";
         messageEl.classList.add("auth-error");
         return;
       }
 
-      //  sécurité simple (type MIME)
       const allowed = ["image/png", "image/jpeg", "image/webp"];
       if (!allowed.includes(file.type)) {
         messageEl.textContent = "Format image non supporté. Utilisez PNG, JPG/JPEG ou WebP.";
@@ -882,7 +876,7 @@ nextMonthContainer.innerHTML = forecastHtml;
         reader.readAsDataURL(file);
       });
     } else {
-      // fallback si pas d’image fournie
+    
       imageDataUrl = "panier-anti-gaspi-famille.png";
     }
 
@@ -897,7 +891,7 @@ nextMonthContainer.innerHTML = forecastHtml;
       origin,
       region,
       dlc,
-      image: imageDataUrl,   // base64 OU fallback
+      image: imageDataUrl, 
       producerId: user.id,
       producerName: user.name,
       createdAt: new Date().toISOString()

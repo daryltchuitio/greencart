@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const productName = btn.dataset.productName;
 
         let ratingStr = prompt(`Note pour "${productName}" (1 à 5) :`);
-        if (ratingStr === null) return; // annuler
+        if (ratingStr === null) return; 
 
         const rating = parseInt(ratingStr, 10);
         if (isNaN(rating) || rating < 1 || rating > 5) {

@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --------- Déconnexion automatique après inactivité ----------
-  const INACTIVITY_LIMIT_MS = 15 * 60 * 1000; // 15 minutes
+  const INACTIVITY_LIMIT_MS = 15 * 60 * 1000;
   let lastActivity = Date.now();
 
   function resetActivity() {
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function logoutForInactivity() {
     const user = getCurrentUser();
-    if (!user) return; // déjà déconnecté
+    if (!user) return; 
 
     localStorage.removeItem(CURRENT_USER_KEY);
     alert("Pour des raisons de sécurité, vous avez été déconnecté après une période d'inactivité.");
@@ -53,12 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(() => {
       const currentUser = getCurrentUser();
-      if (!currentUser) return; // si l'utilisateur s'est déconnecté entre temps
+      if (!currentUser) return; 
 
       const now = Date.now();
       if (now - lastActivity > INACTIVITY_LIMIT_MS) {
         logoutForInactivity();
       }
-    }, 30000); // on vérifie toutes les 30s
+    }, 30000);
   }
 });
